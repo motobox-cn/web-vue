@@ -18,9 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { Socket } from 'socket.io-client';
-import { inject } from 'vue';
-import { AttitudeData, GPSData } from '../types/ws-types';
+import { AttitudeData, GPSData } from "../types/ws-types";
 
 //! todo 封装成hooks
 // const socket = inject('socket') as Socket;
@@ -47,8 +45,7 @@ const mockGPSData: GPSData = {
 const mockAttitudeData: AttitudeData = {
   roll: 10.5,
   pitch: -3.7,
-}
-
+};
 </script>
 
 <style scoped>
