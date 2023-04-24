@@ -21,14 +21,14 @@
 import { AttitudeData, GPSData } from "../types/ws-types";
 
 //! todo 封装成hooks
-// const socket = inject('socket') as Socket;
-// socket.on('GPS', (data) => {
-//   console.log(data)
-// });
-// socket.on('Attitude', (data) => {
-//   console.log(data)
-// });
-
+import useSocket from "../composables/useSocket";
+const { onGPSData, onAttitudeData } = useSocket();
+onGPSData((data) => {
+  console.log(data);
+});
+onAttitudeData((data) => {
+  console.log(data);
+});
 //! mock
 const mockGPSData: GPSData = {
   gpsTime: "2022-05-20 14:30:59",

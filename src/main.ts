@@ -8,7 +8,7 @@ import { getIpAddress } from './utils'
 const app = createApp(App)
 app.use(router)
 app.use(socket, {
-  connection: getIpAddress() + '/ws',
+  connection: getIpAddress() + ':3000/ws',
   options: {
     autoConnect: true,
   },
