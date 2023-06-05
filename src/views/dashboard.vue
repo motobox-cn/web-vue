@@ -5,43 +5,50 @@
     <p>Roll: {{ mockAttitudeData.roll }}</p>
     <p>Pitch: {{ mockAttitudeData.pitch }}</p>
     <!-- GPS -->
-    <p>GPS Time: {{ mockGPSData.gpsTime }}</p>
-    <p>GPS Status: {{ mockGPSData.gpsStatus }}</p>
+    <p>GPS Time: {{ mockGPSData.gps_time }}</p>
+    <p>GPS Status: {{ mockGPSData.status }}</p>
     <p>Longitude: {{ mockGPSData.longitude }}</p>
     <p>Latitude: {{ mockGPSData.latitude }}</p>
     <p>Heading: {{ mockGPSData.heading }}</p>
-    <p>Height: {{ mockGPSData.height }} {{ mockGPSData.heightUnit }}</p>
-    <p>Longitude Direction: {{ mockGPSData.lonDirection }}</p>
-    <p>Latitude Direction: {{ mockGPSData.latDirection }}</p>
+    <p>Height: {{ mockGPSData.hight }} {{ mockGPSData.high_tube }}</p>
+    <p>Longitude Direction: {{ mockGPSData.lon_direction }}</p>
+    <p>Latitude Direction: {{ mockGPSData.lat_direction }}</p>
     <p>Speed: {{ mockGPSData.speed }} m/s</p>
+    <br />
+    <speedGauge class="h-[300px]" :speed="mockGPSData.speed" />
+    <br />
+    <button @click="start">start</button>
+    <button @click="pause">pause</button>
+    <button @click="stop">stop</button>
   </div>
 </template>
 
 <script setup lang="ts">
+import speedGauge from '../components/gauge/speed-gauge.vue'
 import { AttitudeData, GPSData } from "../types/ws-types";
+import { useMockData } from "../mock";
+import { IGPSData } from '../types/data'
+import { ref, watch } from "vue";
 
-//! todo 封装成hooks
-import useSocket from "../composables/useSocket";
-const { onGPSData, onAttitudeData } = useSocket();
-onGPSData((data) => {
-  console.log(data);
-});
-onAttitudeData((data) => {
-  console.log(data);
-});
+const mockGPSData = ref<IGPSData>({ "gps_time": 0, "status": "", "heading": 0, "hight": 24, "high_tube": "M", "lon_direction": "E", "lat_direction": "N", "longitude": 120.66384500000001, "latitude": 31.195198166666668, "is_gps_normal": true, "speed": 0 })
+
+const { start, stop, pause, data } = useMockData()
+watch(() => data.value, (val) => {
+  mockGPSData.value = val!
+})
+
+// //! todo 封装成hooks
+// import useSocket from "../composables/useSocket";
+// import { ref } from "vue";
+// const { onGPSData, onAttitudeData } = useSocket();
+// onGPSData((data) => {
+//   console.log(data);
+// });
+// onAttitudeData((data) => {
+//   console.log(data);
+// });
 //! mock
-const mockGPSData: GPSData = {
-  gpsTime: "2022-05-20 14:30:59",
-  gpsStatus: "valid",
-  longitude: "120.123456",
-  latitude: "30.654321",
-  heading: "180.00",
-  height: "100.00",
-  heightUnit: "M",
-  lonDirection: "E",
-  latDirection: "N",
-  speed: "80.00",
-};
+
 const mockAttitudeData: AttitudeData = {
   roll: 10.5,
   pitch: -3.7,
