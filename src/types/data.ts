@@ -14,10 +14,6 @@ export interface IGPSData {
 }
 
 
-
-
-//____
-
 // 定义传感器数据类型
 interface SensorData {
   AccelX: number;   // X轴加速度

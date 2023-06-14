@@ -1,4 +1,5 @@
 import dashboardVue from "../../views/dashboard.vue"
+import testVue from "../../views/test.vue"
 
 export const routes = [
   {
@@ -10,6 +11,11 @@ export const routes = [
     name: 'dash',
     path: '/dash',
     component: dashboardVue
+  },
+  {
+    name: 'test',
+    path: '/test',
+    component: testVue
   }
 ]
 
