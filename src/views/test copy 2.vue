@@ -3,11 +3,12 @@
 </template>
 
 <script setup lang="ts">
-import GPS from '../utils/gps'
 import AMapLoader from '@amap/amap-jsapi-loader';
 import { onMounted, ref, shallowRef, watch } from 'vue';
 import { useMockData } from '../mock';
 import NavIcon from '../asserts/nav_icon.png'
+
+// const infoRef = ref(null)
 
 // 高德地图对象
 let AMap: any;
@@ -17,6 +18,7 @@ let AMapInstance: any;
 let AMapCenterMarker: any;
 
 
+// const panel = ''
 
 
 // 初始化地图
@@ -65,7 +67,12 @@ const initMap = async ({ plugins, mapStyle, initialCenter }: TProps) => {
     // 设置旋转角
     AMapInstance.setRotation(-e.target.getOrientation())
   });
-
+  // // 
+  // const infoWindow = new AMap.InfoWindow({
+  //   content: infoRef.value,
+  //   isCustom: true
+  // })
+  // infoWindow.open(AMapInstance, [120.673057, 31.179554])
 }
 
 // 初始化地图
@@ -79,28 +86,19 @@ initMap({
 const onReceiving = ({ longitude, latitude }: any) => {
   if (!AMap) return
   // 转换为高德坐标
-  // AMap.convertFrom([longitude, latitude],
-  //   'gps',
-  //   (status, result) => {
-  //     if (result.info === 'ok') {
-  //       const { lat, lng } = result.locations[0]
-  //       console.log('[[convertFrom]] OK:', [lat, lng]);
-  //       // 移动地图中心点
-  //       AMapCenterMarker.moveTo([lng, lat], {
-  //         duration: 1000,
-  //         delay: 500,
-  //       });
-  //     } else {
-  //       console.log('[[convertFrom]] ERR:', result);
-  //     }
-  //   })
-  const { lat, lng } = GPS.gcj_encrypt(latitude, longitude)
-  console.log('[[convertFrom]] OK:', [lat, lng]);
-  // 移动地图中心点
-  AMapCenterMarker.moveTo([lng, lat], {
-    duration: 1000,
-    delay: 500,
-  });
+  AMap.convertFrom([longitude, latitude],
+    'gps',
+    (status, result) => {
+      if (result.info === 'ok') {
+        const { lat, lng } = result.locations[0]
+        console.log('[[convertFrom]]:', [lat, lng]);
+        // 移动地图中心点
+        AMapCenterMarker.moveTo([lng, lat], {
+          duration: 1000,
+          delay: 500,
+        });
+      }
+    })
 }
 
 
@@ -109,6 +107,7 @@ start()
 watch(
   () => GPSDataRef.value,
   onReceiving)
+
 
 
 </script>
