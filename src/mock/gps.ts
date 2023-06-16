@@ -1,4 +1,6 @@
-export const GPSData = [
+import { IGPSData } from "../types/data";
+
+export const GPSData: IGPSData[] = [
   {
     "gps_time": 0,
     "status": "",

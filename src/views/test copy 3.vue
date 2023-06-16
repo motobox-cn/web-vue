@@ -19,10 +19,8 @@ let AMap: any;
 // 高德地图实例
 let AMapInstance: any;
 // 高德地图中心点
-let AMapCenterMarker: any
-// 走过的路径
-let passedPolyline:any
-let passedPathArr:any[]=[]
+let AMapCenterMarker: any;
+
 
 
 
@@ -57,7 +55,6 @@ const initMap = async ({ plugins, mapStyle, initialCenter }: TProps) => {
   AMapCenterMarker = new AMap.Marker({
     map: AMapInstance,
     position: initialCenter,
-    autoRotation: true,
     icon: new AMap.Icon({
       size: new AMap.Size(40, 40), // 图标尺寸
       image: NavIcon, // Icon的图像
@@ -66,32 +63,13 @@ const initMap = async ({ plugins, mapStyle, initialCenter }: TProps) => {
     }),
     offset: new AMap.Pixel(-13, -26),// 相对于基点的位置
   });
-  // 实例化 Polyline
-  passedPolyline=new AMap.Polyline({
-    map: AMapInstance,
-    // path:passedPathArr,
-    strokeColor: "#28F",  //线颜色
-    // strokeOpacity: 1,     //线透明度
-    strokeWeight: 6,      //线宽
-    strokeStyle: "solid"  //线样式
-  });
-
   // 监听中心点移动
   AMapCenterMarker.on('moving', function (e: any) {
     // 设置地图中心点
     AMapInstance.setCenter(e.target.getPosition())
     // 设置旋转角
     AMapInstance.setRotation(-e.target.getOrientation())
-    // 
-    // passedPathArr.push([e.passedPath[0].lng, e.passedPath[0].lat])
-    // passedPolyline.setPath(passedPathArr)
-    // passedPolyline.setPath(e.passedPath)
-    Array.prototype.push.apply(passedPathArr,e.passedPath)
-    // passedPathArr.push(e.passedPath)
-    passedPolyline.setPath(passedPathArr);
   });
-
-
 
 }
 
@@ -111,23 +89,36 @@ const onReceiving = ({ longitude, latitude, speed, hight }: IGPSData) => {
   }
   if (!AMap) return
   // 转换为高德坐标
+  // AMap.convertFrom([longitude, latitude],
+  //   'gps',
+  //   (status, result) => {
+  //     if (result.info === 'ok') {
+  //       const { lat, lng } = result.locations[0]
+  //       console.log('[[convertFrom]] OK:', [lat, lng]);
+  //       // 移动地图中心点
+  //       AMapCenterMarker.moveTo([lng, lat], {
+  //         duration: 1000,
+  //         delay: 500,
+  //       });
+  //     } else {
+  //       console.log('[[convertFrom]] ERR:', result);
+  //     }
+  //   })
   const { lat, lng } = GPS.gcj_encrypt(latitude, longitude)
-  console.log('[[convertFrom]] OK:', [lng,lat ]);
+  console.log('[[convertFrom]] OK:', [lat, lng]);
   // 移动地图中心点
   AMapCenterMarker.moveTo([lng, lat], {
-    duration: 1000,
-    delay: 500,
+    duration: 500,
+    delay: 250,
   });
-  // passedPathArr.push([lng, lat])
-  
 }
 
 
-const { start, data: GPSDataRef } = useMockData(1000)
+const { start, data: GPSDataRef } = useMockData(500)
 start()
 watch(
   () => GPSDataRef.value,
-  (val) => onReceiving(val!))
+  (val) => onReceiving)
 
 
 </script>
