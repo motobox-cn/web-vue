@@ -1,7 +1,10 @@
 <template>
-  <div class="overflow-hidden bg-[#2a2a2a] p-10 text-center text-white">
-    gaugeData:
-    <div>{{ gaugeData }}</div>
+  <div class="overflow-hidden bg-[#2a2a2a] py-3 
+  text-white h-[20vh] 
+  flex flex-col justify-center 
+  font-semibold  text-xl">
+    <div>Speed:{{ gaugeData.speed.toFixed(2) }} km/h</div>
+    <div>Hight:{{ gaugeData.hight.toFixed(2) }}</div>
   </div>
   <div id="mapContainer" class="fixed"></div>
 </template>
@@ -33,6 +36,15 @@ type TProps = {
   initialCenter: [number, number]
 }
 
+/**
+ * 
+ * @example
+ * {
+  initialCenter: [120.54754249999999, 31.260719333333334],
+  mapStyle: 'amap://styles/dark',
+  plugins: ['AMap.GraspRoad', "AMap.Driving", "AMap.MoveAnimation"]
+}
+ */
 const initMap = async ({ plugins, mapStyle, initialCenter }: TProps) => {
   //@ts-ignore
   window._AMapSecurityConfig = {
@@ -64,14 +76,14 @@ const initMap = async ({ plugins, mapStyle, initialCenter }: TProps) => {
       imageSize: new AMap.Size(40, 40), // 根据所设置的大小拉伸或压缩图片
       imageOffset: new AMap.Pixel(0, 0), // 图标取图偏移量
     }),
-    offset: new AMap.Pixel(-13, -26),// 相对于基点的位置
+    offset: new AMap.Pixel(-20, -26),// 相对于基点的位置
   });
   // 实例化 Polyline
   passedPolyline=new AMap.Polyline({
     map: AMapInstance,
     // path:passedPathArr,
     strokeColor: "#28F",  //线颜色
-    // strokeOpacity: 1,     //线透明度
+    strokeOpacity: 1,     //线透明度
     strokeWeight: 6,      //线宽
     strokeStyle: "solid"  //线样式
   });
@@ -83,11 +95,8 @@ const initMap = async ({ plugins, mapStyle, initialCenter }: TProps) => {
     // 设置旋转角
     AMapInstance.setRotation(-e.target.getOrientation())
     // 
-    // passedPathArr.push([e.passedPath[0].lng, e.passedPath[0].lat])
-    // passedPolyline.setPath(passedPathArr)
-    // passedPolyline.setPath(e.passedPath)
-    Array.prototype.push.apply(passedPathArr,e.passedPath)
-    // passedPathArr.push(e.passedPath)
+    passedPathArr.push(e.target.getPosition())
+    // Array.prototype.push.apply(passedPathArr,e.passedPath)
     passedPolyline.setPath(passedPathArr);
   });
 
@@ -95,9 +104,9 @@ const initMap = async ({ plugins, mapStyle, initialCenter }: TProps) => {
 
 }
 
-// 初始化地图
+//! 初始化地图
 initMap({
-  initialCenter: [120.673057, 31.179554],
+  initialCenter: [120.60265328924632, 31.26558052763209],
   mapStyle: 'amap://styles/dark',
   plugins: ['AMap.GraspRoad', "AMap.Driving", "AMap.MoveAnimation"]
 });
@@ -112,19 +121,19 @@ const onReceiving = ({ longitude, latitude, speed, hight }: IGPSData) => {
   if (!AMap) return
   // 转换为高德坐标
   const { lat, lng } = GPS.gcj_encrypt(latitude, longitude)
-  console.log('[[convertFrom]] OK:', [lng,lat ]);
+  console.log('OK:', [lng,lat ]);
   // 移动地图中心点
   AMapCenterMarker.moveTo([lng, lat], {
-    duration: 1000,
-    delay: 500,
+    duration: 2000,
+    delay: 1000,
   });
-  // passedPathArr.push([lng, lat])
-  
 }
 
 
-const { start, data: GPSDataRef } = useMockData(1000)
+const { start, data: GPSDataRef } = useMockData(500)
 start()
+
+console.group('[[convertFrom]]')
 watch(
   () => GPSDataRef.value,
   (val) => onReceiving(val!))
